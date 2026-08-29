@@ -1,10 +1,6 @@
-name: Build Android App
+name: Build APK
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -19,16 +15,26 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
-    - name: Give permissions to gradlew
-      run: chmod +x gradlew
+    - name: Generate Gradle Wrapper
+      run: |
+        # Agar gradlew file pehle se nahi hai, toh ye script usay banayegi
+        if [ ! -f "gradlew" ]; then
+          # Download Gradle binary to extract wrapper
+          wget -q https://services.gradle.org/distributions/gradle-8.9-bin.zip -O gradle.zip
+          unzip -q -o gradle.zip -d gradle_tmp
+          ./gradle_tmp/gradle-8.9/bin/gradle wrapper --gradle-version 8.9
+          rm -rf gradle.zip gradle_tmp
+        fi
+        
+        # Make gradlew executable
+        chmod +x gradlew
 
-    - name: Build APK (Debug)
+    - name: Build Debug APK
       run: ./gradlew assembleDebug
 
-    - name: Upload APK artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug.apk
+        name: app-debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
