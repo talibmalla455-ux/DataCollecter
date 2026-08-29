@@ -20,7 +20,6 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      # Ye step ab fail nahi karega kyunki agar gradlew nahi hai to skip ho jayega
       run: chmod +x gradlew || true
 
     - name: Build APK
