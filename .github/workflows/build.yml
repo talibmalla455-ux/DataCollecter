@@ -20,13 +20,12 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      # Agar gradlew file exist nahi kar rhi, to ye step skip ho jaye, isliye hum '|| true' add nahi karte, balki ye check karte hain:
-    
-    - name: Build with Gradle
+      # Ye step ab fail nahi karega kyunki agar gradlew nahi hai to skip ho jayega
+      run: chmod +x gradlew || true
+
+    - name: Build APK
       run: |
         if [ -f "gradlew" ]; then
-          chmod +x gradlew
           ./gradlew assembleDebug
         else
           gradle assembleDebug
